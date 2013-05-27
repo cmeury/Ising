@@ -1,11 +1,12 @@
 from numpy import array, exp, arange, roll, append
 import matplotlib.pyplot as plt
 from random import choice, randrange, random
+from time import time
 
 N = 20 #number of spins
 J = 1. #coupling
 n_therm = 100 #Thermalization of system
-n = 400
+n = 400 
 SPIN = [-1, 1]
 #BETA = arange(0.1, 3.5, 0.1)
 BETA = arange(0.1, 1, 0.1)
@@ -52,7 +53,7 @@ def iter_step(sample):
     return sample
 
 def update_m_e(sample):
-    """updates magnetization, energy per iteration step"""
+    """updates magnetization, energy per sweep"""
     global magnetization, energy 
     magnetization = append(magnetization, array([sum(sample)]))
     energy = append(energy, -J*sum(sample*roll(sample, 1)))
@@ -68,7 +69,9 @@ def plot_magn_energy():
 
 if __name__ == "__main__":
     sample = 0
+    t = time()
     for beta in BETA:
+        t3 = time()
         #Thermalization process
         for i in range(n_therm):
             for k in range(N):
@@ -81,7 +84,9 @@ if __name__ == "__main__":
         current_sample.append(sample) #add last sample to current array 
         m_list = append(m_list, magnetization.mean())
         e_list = append(e_list, energy.mean())
-        print "magnetization: ", m_list
-        print "mean energy: ", e_list
+        t4 = time()
+        print "time for beta = ", beta, " is: ", t4 - t3, "s"
+    t2 = time()
+    print "time taken: ", (t2 - t)/60, " min."
     plot_magn_energy()
     plt.show()
