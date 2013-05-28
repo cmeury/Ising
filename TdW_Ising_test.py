@@ -2,14 +2,13 @@ import unittest
 from numpy import array, testing
 from TdW_Ising import Spin
 
-class TestTdWIsing(unittest.TestCase):
+class SpinTest(unittest.TestCase):
 
 	def setUp(self):
 		self.spin = Spin(array([1,1,-1,-1]),0)
 
 	def test_flip_first(self):
 		flipped_spins = self.spin.flip(0)
-		print self.spin.spins
 		testing.assert_array_equal([-1,1,-1,-1], flipped_spins)
 
 	def test_flip_last(self):
@@ -33,5 +32,3 @@ class TestTdWIsing(unittest.TestCase):
 	def test_flip_outofbounds(self):
 		self.assertRaises(IndexError, self.spin.flip, 5)
 
-if __name__ == '__main__':
-	unittest.main()
