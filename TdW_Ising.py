@@ -21,12 +21,17 @@ e_list = array([])
 N_magn = 0.
 N_energy = 0.
 
-class Spin:
-    def __init__(self, L, d, J):
-        """initializes a lattice of L**d spins with coupling constant J
-           has spins, energy, magnetization"""
+class RandomSpins:
+    def __init__(self, L, d):
+        """initializes a lattice of L**d spins"""
         SPIN = [-1, 1]
         self.spins = array([choice(SPIN) for i in range(L**d)])
+
+class Spin:
+    def __init__(self, spins, J):
+        """initializes a lattice of given spins with coupling constant J
+           has spins, energy, magnetization"""
+        self.spins = spins
         self.energy = -J * sum(self.spins * roll(self.spins, 1))
         self.magnetization = sum(self.spins)
 
@@ -59,21 +64,22 @@ class Spin:
 def iter_step(sample):
     """one step of metropolis algorithm, cf wikipedia Ising-model"""
     #Step 1: initialize random state
-    spins = Spin(L, d, J) 
+    random_spins = RandomSpins(L, d)
+    spin = Spin(random_spins.spins, J) 
 
     #Step 2: flip random spin
-    idx = randrange(len(spins.spins))
-    flipped_spins = spins.flip(idx)
+    idx = randrange(len(spin.spins))
+    flipped_spins = spin.flip(idx)
 
     #Step 3: calculate probability a
-    energy_diff = spins.energy_diff(flipped_spins, idx)
+    energy_diff = spin.energy_diff(flipped_spins, idx)
     a = exp(-beta*(energy_diff))
 
     #Step 4: accept flipped_spins with prob. a
     if a >= random():
         return flipped_spins 
     else:
-        return spins.spins
+        return spin.spins
 
 def update_energy_magnetization(sample):
     """updates magnetization, energy per sweep"""
